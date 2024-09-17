@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TAY - Tasimacilik Ve Yuksek Teknoloji</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <style>
+/* ProTırApp CSS - Uber/Lyft Kalitesinde Tasarım */
+
+/* ---------- Değişkenler ---------- */
+:root {
+  /* Renkler */
+  --primary-color: #1a73e8;
+  --secondary-color: #34a853;
+  --tertiary-color: #fbbc04;
+  --danger-color: #ea4335;
+  --background-color: #f8f9fa;
+  --text-color: #202124;
+  --text-secondary: #5f6368;
+  --border-color: #dadce0;
+
+  /* Ölçüler */
+  --container-max-width: 1200px;
+  --sidebar-width: 250px;
+  --header-height: 60px;
+  --card-border-radius: 8px;
+  --button-border-radius: 4px;
+
+  /* Gölgeler */
+  --shadow-sm: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+  --shadow-md: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
+  --shadow-lg: 0 1px 3px 0 rgba(60, 64, 67, 0.3), 0 4px 8px 3px rgba(60, 64, 67, 0.15);
+
+  /* Geçişler */
+  --transition-fast: 0.1s ease;
+  --transition-normal: 0.2s ease;
+  --transition-slow: 0.3s ease;
+}
+
+/* ---------- Genel Stiller ---------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ---------- Header ---------- */
+.header {
+    background-color: var(--primary-color);
+    color: var(--text-on-primary);
+    padding: 10px 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: var(--container-max-width);
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--text-on-primary);
+}
+
+/* ---------- Ana Düzen ---------- */
+.main-layout {
+  display: flex;
+  margin-top: var(--header-height);
+  height: calc(100vh - var(--header-height));
+}
+
+/* ---------- Sidebar ---------- */
+.sidebar {
+  width: var(--sidebar-width);
+  background-color: #fff;
+  border-right: 1px solid var(--border-color);
+  overflow-y: auto;
+  transition: transform var(--transition-normal);
+}
+
+.sidebar-content {
+  padding: 20px;
+}
+
+.sidebar h2 {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  color: var(--text-secondary);
+}
+
+/* ---------- Ana İçerik ---------- */
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+/* ---------- Kartlar ---------- */
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  background-color: #fff;
+  border-radius: var(--card-border-radius);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-normal);
+  overflow: hidden;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.card-header {
+  background-color: var(--primary-color);
+  color: #fff;
+  padding: 15px;
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.card-body {
+  padding: 15px;
+}
+
+.card-footer {
+  border-top: 1px solid var(--border-color);
+  padding: 15px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ---------- Butonlar ---------- */
+.btn {
+  display: inline-block;
+  padding: 10px 15px;
+  background-color: var(--primary-color);
+  color: #fff;
+  border: none;
+  border-radius: var(--button-border-radius);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.btn:hover {
+  background-color: #1765cc;
+}
+
+.btn-secondary {
+  background-color: var(--secondary-color);
+}
+
+.btn-secondary:hover {
+  background-color: #2d9748;
+}
+
+.btn-danger {
+  background-color: var(--danger-color);
+}
+
+.btn-danger:hover {
+  background-color: #d93025;
+}
+
+/* ---------- Formlar ---------- */
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--button-border-radius);
+  font-size: 1rem;
+  transition: border-color var(--transition-fast);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+/* ---------- Harita Konteyneri ---------- */
+.map-container {
+  height: 400px;
+  border-radius: var(--card-border-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ---------- Modal ---------- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.modal-content {
+  background-color: #fff;
+  border-radius: var(--card-border-radius);
+  box-shadow: var(--shadow-lg);
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  padding: 15px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-body {
+  padding: 15px;
+}
+
+.modal-footer {
+  padding: 15px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ---------- Bildirimler ---------- */
+.notification-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1500;
+}
+
+.notification {
+  background-color: #fff;
+  border-radius: var(--card-border-radius);
+  box-shadow: var(--shadow-md);
+  padding: 15px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  min-width: 300px;
+}
+
+.notification-icon {
+  margin-right: 15px;
+  font-size: 1.5rem;
+}
+
+.notification-content {
+  flex: 1;
+}
+
+.notification-title {
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+/* ---------- Sürüş Modu ---------- */
+.driving-mode {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #000;
+  color: #fff;
+  z-index: 2500;
+  display: flex;
+  flex-direction: column;
+}
+
+.driving-mode-header {
+  padding: 15px;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.driving-mode-content {
+  flex: 1;
+  display: flex;
+}
+
+.driving-mode-info {
+  width: 300px;
+  padding: 15px;
+  background-color: rgba(255, 255, 255, 0.05);
+  overflow-y: auto;
+}
+
+.driving-mode-map {
+  flex: 1;
+}
+
+.driving-mode-controls {
+  padding: 15px;
+  background-color: rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: center;
+}
+
+/* ---------- Yardımcı Sınıflar ---------- */
+.text-primary { color: var(--primary-color); }
+.text-secondary { color: var(--secondary-color); }
+.text-danger { color: var(--danger-color); }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.font-bold { font-weight: bold; }
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+
+/* ---------- Responsive Tasarım ---------- */
+@media (max-width: 768px) {
+  :root {
+    --sidebar-width: 100%;
+  }
+
+  .main-layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    position: fixed;
+    left: -100%;
+    top: var(--header-height);
+    bottom: 0;
+    z-index: 1500;
+  }
+
+  .sidebar.active {
+    left: 0;
+  }
+
+  .card-container {
+    grid-template-columns: 1fr;
+  }
+
+  .driving-mode-content {
+    flex-direction: column;
+  }
+
+  .driving-mode-info {
+    width: 100%;
+    height: 200px;
+  }
+}
+
+/* ---------- Animasyonlar ---------- */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes slideInLeft {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+.fade-in {
+  animation: fadeIn var(--transition-normal);
+}
+
+.slide-in-right {
+  animation: slideInRight var(--transition-normal);
+}
+
+.slide-in-left {
+  animation: slideInLeft var(--transition-normal);
+}
+
+/* ---------- Özel Scrollbar ---------- */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+
+/* ----------- Renkler ----------------*/    
+
+/* ProTırApp CSS Renk Güncellemeleri */
+
+:root {
+    /* Ana Renkler */
+    --primary-color: #2196F3;
+    --secondary-color: #4CAF50;
+    --accent-color: #FFC107;
+    --danger-color: #F44336;
+    
+    /* Metin Renkleri */
+    --text-primary: #212121;
+    --text-secondary: #757575;
+    --text-on-primary: #FFFFFF;
+    
+    /* Arka Plan Renkleri */
+    --background-light: #F5F5F5;
+    --background-dark: #333333;
+    --card-background: #FFFFFF;
+    
+    /* Durum Renkleri */
+    --status-available: #4CAF50;
+    --status-busy: #FFC107;
+    --status-on-duty: #2196F3;
+}
+
+body {
+    background-color: var(--background-light);
+    color: var(--text-primary);
+}
+
+.header {
+    background-color: var(--primary-color);
+    color: var(--text-on-primary);
+}
+
+.sidebar {
+    background-color: var(--background-dark);
+    color: var(--text-on-primary);
+}
+
+.card {
+    background-color: var(--card-background);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background-color: var(--primary-color);
+    color: var(--text-on-primary);
+}
+
+.btn {
+    background-color: var(--primary-color);
+    color: var(--text-on-primary);
+}
+
+.btn:hover {
+    background-color: #1976D2;  /* Daha koyu bir mavi */
+}
+
+.btn-secondary {
+    background-color: var(--secondary-color);
+}
+
+.btn-secondary:hover {
+    background-color: #45a049;  /* Daha koyu bir yeşil */
+}
+
+.btn-danger {
+    background-color: var(--danger-color);
+}
+
+.btn-danger:hover {
+    background-color: #d32f2f;  /* Daha koyu bir kırmızı */
+}
+
+.status-badge {
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+.status-badge.müsait {
+    background-color: var(--status-available);
+    color: var(--text-on-primary);
+}
+
+.status-badge.meşgul {
+    background-color: var(--status-busy);
+    color: var(--text-primary);
+}
+
+.status-badge.görevde {
+    background-color: var(--status-on-duty);
+    color: var(--text-on-primary);
+}
+
+.notification {
+    background-color: var(--card-background);
+    border-left: 4px solid var(--primary-color);
+}
+
+.notification.success {
+    border-left-color: var(--secondary-color);
+}
+
+.notification.warning {
+    border-left-color: var(--accent-color);
+}
+
+.notification.error {
+    border-left-color: var(--danger-color);
+}
+
+.driving-mode {
+    background-color: var(--background-dark);
+    color: var(--text-on-primary);
+}
+
+.driving-mode-header {
+    background-color: var(--primary-color);
+}
+
+.modal-content {
+    background-color: var(--card-background);
+}
+
+.modal-header {
+    background-color: var(--primary-color);
+    color: var(--text-on-primary);
+}
+
+/* Ek stil güncellemeleri */
+.section-title {
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+
+.notification-icon {
+    color: var(--primary-color);
+}
+
+.notification.success .notification-icon {
+    color: var(--secondary-color);
+}
+
+.notification.warning .notification-icon {
+    color: var(--accent-color);
+}
+
+.notification.error .notification-icon {
+    color: var(--danger-color);
+}
+/* Header Styles */
+.header {
+    background-color: var(--primary-color);
+    color: var(--text-on-primary);
+    padding: 1rem 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.container {
+    max-width: var(--container-max-width, 1200px);
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.header__content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Logo Styles */
+.header__logo {
+    flex-shrink: 0;
+}
+
+.logo {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: var(--text-on-primary);
+    margin: 0;
+}
+
+.version {
+    font-size: 0.75rem;
+    opacity: 0.8;
+}
+
+/* Navigation Styles */
+.header__nav {
+    display: flex;
+    align-items: center;
+}
+
+.nav__list {
+    display: flex;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav__item {
+    margin-left: 1.5rem;
+}
+
+.nav__link {
+    color: var(--text-on-primary);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.nav__link:hover,
+.nav__link:focus {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Menu Toggle Button (for mobile) */
+/* Header Temel Stilleri */
+.tay-header {
+    background-color: #1a73e8;
+    color: #ffffff;
+    padding: 10px 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+.tay-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.tay-header__content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Logo Stilleri */
+.tay-logo {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.tay-version {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+/* Navigasyon Stilleri */
+.tay-nav__list {
+    display: flex;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.tay-nav__item {
+    margin-left: 20px;
+}
+
+.tay-nav__link {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.tay-nav__link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Mobil Menü Toggle Butonu */
+.tay-menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+/* Responsive Tasarım */
+@media (max-width: 768px) {
+    .tay-header__content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .tay-nav {
+        width: 100%;
+        margin-top: 10px;
+        display: none;
+    }
+
+    .tay-nav.active {
+        display: block;
+    }
+
+    .tay-nav__list {
+        flex-direction: column;
+    }
+
+    .tay-nav__item {
+        margin: 10px 0;
+    }
+
+    .tay-menu-toggle {
+        display: block;
+        position: absolute;
+        top: 10px;
+        right: 20px;
+    }
+}
+
+
+
+</style>
+</head>
+<body>
+<header class="tay-header">
+    <div class="tay-container">
+        <div class="tay-header__content">
+            <div class="tay-logo">
+                TAY - Taşımacılığın Akıllı Yolu <span class="tay-version">(Versiyon 0.0.2)</span>
+            </div>
+            <nav class="tay-nav">
+                <ul class="tay-nav__list">
+            
+                    <ul class="tay-nav__list">
+                    <li class="tay-nav__item"><a href="#" class="tay-nav__link" onclick="showJobList()">Aktif İşler</a></li>
+                    <li class="tay-nav__item"><a href="#" class="tay-nav__link" onclick="showAvailableTrucks()">Müsait Tırlar</a></li>
+                    <li class="tay-nav__item"><a href="#" class="tay-nav__link" onclick="showProfile()">Profil</a></li>
+                    <li class="tay-nav__item"><a href="#" class="tay-nav__link" onclick="showCompletedJobs()">Tamamlanan İşler</a></li>
+                </ul>
+            
+            </nav>
+            <button class="tay-menu-toggle" id="tay-menu-toggle">☰</button>
+        </div>
+    </div>
+</header>
+<div class="main-layout">
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-content">
+            <h2>Sürücü Bilgileri</h2>
+            <div id="driver-info">
+                <p>Yükleniyor...</p>
+            </div>
+            <button class="btn btn-secondary mt-2" onclick="toggleAvailability()">Durumu Değiştir</button>
+            <button class="btn mt-1" onclick="showAvailableTrucks()">Müsait Tırlar</button>
+            <button class="btn mt-1" onclick="showProfile()">Profil</button>
+            <button class="btn mt-1" onclick="showJobList()">Aktif İşler</button>
+            <button class="btn mt-1" onclick="showCompletedJobs()">Tamamlanan İşler</button>
+            <button class="btn mt-1" onclick="showWalletAndHistory()">Cüzdan ve Geçmiş</button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="container">
+            <section id="job-list-section">
+                <h2 class="section-title">Mevcut İşler</h2>
+                <div class="card-container" id="job-list"></div>
+            </section>
+
+            <section id="truck-list-section" style="display: none;">
+                <h2 class="section-title">Müsait Tırlar</h2>
+                <div class="card-container" id="truck-list"></div>
+            </section>
+
+            <section id="map-section" class="mt-2">
+                <h2 class="section-title">Harita</h2>
+                <div class="map-container">
+                    <div id="map"></div>
+                </div>
+            </section>
+        </div>
+    </main>
+</div>
+
+    <div id="notification-container" class="notification-container"></div>
+
+    <div id="driving-mode" class="driving-mode" style="display: none;">
+        <div class="driving-mode-header">
+            <h2>Sürüş Modu</h2>
+        </div>
+        <div class="driving-mode-content">
+            <div class="driving-mode-info">
+                <h3>Sürüş Bilgileri</h3>
+                <p>Mevcut Konum: <span id="current-location"></span></p>
+                <p>Sonraki Durak: <span id="next-stop"></span></p>
+                <p>Sonraki Görev: <span id="next-task"></span></p>
+                <p>Kalan Mesafe: <span id="remaining-distance"></span></p>
+                <p>Tahmini Varış: <span id="estimated-arrival"></span></p>
+            </div>
+            <div class="driving-mode-map" id="driving-mode-map"></div>
+        </div>
+        <div class="driving-mode-controls">
+            <button class="btn btn-secondary" onclick="toggleDrivingModePause()">Duraklat/Devam Et</button>
+            <button class="btn btn-danger" onclick="endDrivingMode()">Sürüşü Sonlandır</button>
+        </div>
+    </div>
+
+    <div id="modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title"></h3>
+                <button class="btn-icon" onclick="closeModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal()">Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
+    <script>
+ // ProTırApp JavaScript Kodu
+
+// --------- 1. Değişkenler ve Veri Yapıları ---------
+let driver = {
+    id: "TR001",
+    name: "Ahmet Yılmaz",
+    location: "İstanbul",
+    status: "Müsait",
+    currentTruck: null,
+    licenseType: "C",
+};
+
+let trucks = [
+    { id: "T001", model: "Volvo FH", capacity: 24000, status: "Müsait", location: "İstanbul" },
+    { id: "T002", model: "Mercedes Actros", capacity: 22000, status: "Bakımda", location: "Ankara" },
+    { id: "T003", model: "Scania R450", capacity: 23000, status: "Müsait", location: "İzmir" },
+];
+
+let jobs = [
+    {
+        id: "J001",
+        route: [
+            { city: "İstanbul", code: "IST-001", task: "Yükleme", weight: 15000 },
+            { city: "Ankara", code: "ANK-002", task: "Kısmi Boşaltma", weight: -5000 },
+            { city: "Konya", code: "KNY-001", task: "Ek Yükleme", weight: 8000 },
+            { city: "Antalya", code: "ANT-003", task: "Tam Boşaltma", weight: -18000 },
+        ],
+        totalDistance: 950,
+        estimatedTime: "14 saat",
+        payment: 5000,
+        status: "Açık",
+        requiredLicense: "C",
+    },
+    // ... Diğer işler buraya eklenebilir
+];
+
+let map, drivingModeMap;
+let currentJob = null;
+let drivingInterval = null;
+
+// --------- 2. Yardımcı Fonksiyonlar ---------
+function getRandomColor() {
+    const colors = ['#1a73e8', '#34a853', '#fbbc04', '#ea4335'];
+    return colors[Math.floor(Math.random() * colors.length)];
+}
+
+function formatCurrency(amount) {
+    return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(amount);
+}
+
+function showNotification(message, type = 'info') {
+    const notificationContainer = document.getElementById('notification-container');
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.innerHTML = `
+        <div class="notification-icon"><i class="fas fa-info-circle"></i></div>
+        <div class="notification-content">
+            <div class="notification-title">${type.charAt(0).toUpperCase() + type.slice(1)}</div>
+            <div class="notification-message">${message}</div>
+        </div>
+    `;
+    notificationContainer.appendChild(notification);
+    setTimeout(() => {
+        notification.classList.add('fade-out');
+        setTimeout(() => notification.remove(), 500);
+    }, 5000);
+}
+
+function showModal(title, content) {
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-body').innerHTML = content;
+    document.getElementById('modal').style.display = 'flex';
+}
+
+function closeModal() {
+    document.getElementById('modal').style.display = 'none';
+}
+
+// --------- 3. UI Güncelleme Fonksiyonları ---------
+function showCompletedJobs() {
+    const content = `
+        <h2>Tamamlanan İşler</h2>
+        ${driver.completedJobs.length > 0 ? `
+            <ul class="completed-jobs-list">
+                ${driver.completedJobs.map(job => `
+                    <li class="completed-job-item">
+                        <span>${job.route[0].city} → ${job.route[job.route.length - 1].city}</span>
+                        <span>${formatCurrency(job.payment)}</span>
+                        <span>${new Date(job.completionDate).toLocaleDateString()}</span>
+                    </li>
+                `).join('')}
+            </ul>
+        ` : '<p>Henüz tamamlanan iş bulunmamaktadır.</p>'}
+    `;
+    showModal("Tamamlanan İşler", content);
+}
+
+
+
+function updateDriverInfo() {
+    const driverInfo = document.getElementById("driver-info");
+    driverInfo.innerHTML = `
+        <p><strong>Sürücü:</strong> ${driver.name}</p>
+        <p><strong>Konum:</strong> ${driver.location}</p>
+        <p><strong>Durum:</strong> <span class="status-badge ${driver.status.toLowerCase()}">${driver.status}</span></p>
+        <p><strong>Mevcut Tır:</strong> ${driver.currentTruck ? driver.currentTruck.model : "Yok"}</p>
+    `;
+}
+function showJobList() {
+    const jobList = document.getElementById("job-list");
+    jobList.innerHTML = "";
+    document.getElementById("job-list-section").style.display = "block";
+    document.getElementById("truck-list-section").style.display = "none";
+
+    jobs.filter(job => job.status === "Açık" && job.requiredLicense === driver.licenseType)
+        .forEach(job => {
+            const jobCard = document.createElement("div");
+            jobCard.className = "card job-card";
+            jobCard.style.borderColor = getRandomColor();
+            jobCard.innerHTML = `
+                <div class="card-header">
+                    <h3>${job.route[0].city} → ${job.route[job.route.length - 1].city}</h3>
+                </div>
+                <div class="card-body">
+                    <p><i class="fas fa-route"></i> Toplam Mesafe: ${job.totalDistance} km</p>
+                    <p><i class="far fa-clock"></i> Tahmini Süre: ${job.estimatedTime}</p>
+                    <p><i class="fas fa-money-bill-wave"></i> Ödeme: ${formatCurrency(job.payment)}</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn" onclick="showJobDetails('${job.id}')">Detaylar</button>
+                    <button class="btn btn-secondary" onclick="acceptJob('${job.id}')">Kabul Et</button>
+                </div>
+            `;
+            jobCard.addEventListener('mouseenter', () => showJobOnMap(job));
+            jobCard.addEventListener('mouseleave', () => clearJobFromMap());
+            jobList.appendChild(jobCard);
+        });
+}
+
+function showJobOnMap(job) {
+    if (map) {
+        map.eachLayer(layer => {
+            if (layer instanceof L.Marker || layer instanceof L.Polyline) {
+                map.removeLayer(layer);
+            }
+        });
+
+        const routePoints = job.route.map(stop => getLatLngForCity(stop.city));
+
+        routePoints.forEach((point, index) => {
+            L.marker(point)
+                .addTo(map)
+                .bindPopup(`${job.route[index].city}: ${job.route[index].task}`);
+        });
+
+        L.polyline(routePoints, { color: getRandomColor() }).addTo(map);
+        map.fitBounds(routePoints);
+    }
+}
+
+function clearJobFromMap() {
+    if (map) {
+        map.eachLayer(layer => {
+            if (layer instanceof L.Marker || layer instanceof L.Polyline) {
+                map.removeLayer(layer);
+            }
+        });
+    }
+}
+
+
+function showAvailableTrucks() {
+    const truckList = document.getElementById("truck-list");
+    truckList.innerHTML = "";
+    document.getElementById("job-list-section").style.display = "none";
+    document.getElementById("truck-list-section").style.display = "block";
+
+    trucks.filter(truck => truck.status === "Müsait")
+        .forEach(truck => {
+            const truckCard = document.createElement("div");
+            truckCard.className = "card";
+            truckCard.style.borderColor = getRandomColor();
+            truckCard.innerHTML = `
+                <div class="card-header">
+                    <h3>${truck.model}</h3>
+                </div>
+                <div class="card-body">
+                    <p><i class="fas fa-weight"></i> Kapasite: ${truck.capacity} kg</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Konum: ${truck.location}</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-secondary" onclick="selectTruck('${truck.id}')">Seç</button>
+                </div>
+            `;
+            truckList.appendChild(truckCard);
+        });
+}
+// showProfile fonksiyonunu 
+
+function updateProfile() {
+    const name = document.getElementById('name').value;
+    const location = document.getElementById('location').value;
+    const licenseType = document.getElementById('licenseType').value;
+
+    driver.name = name;
+    driver.location = location;
+    driver.licenseType = licenseType;
+
+    updateDriverInfo();
+    closeModal();
+    showNotification("Profil başarıyla güncellendi", 'success');
+}
+
+function showEditProfileModal() {
+    const content = `
+        <form id="edit-profile-form">
+            <div class="form-group">
+                <label for="name">Ad Soyad:</label>
+                <input type="text" id="name" name="name" value="${driver.name}" required>
+            </div>
+            <div class="form-group">
+                <label for="location">Konum:</label>
+                <input type="text" id="location" name="location" value="${driver.location}" required>
+            </div>
+            <div class="form-group">
+                <label for="licenseType">Ehliyet Tipi:</label>
+                <select id="licenseType" name="licenseType" required>
+                    <option value="B" ${driver.licenseType === 'B' ? 'selected' : ''}>B</option>
+                    <option value="C" ${driver.licenseType === 'C' ? 'selected' : ''}>C</option>
+                    <option value="D" ${driver.licenseType === 'D' ? 'selected' : ''}>D</option>
+                    <option value="E" ${driver.licenseType === 'E' ? 'selected' : ''}>E</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Güncelle</button>
+        </form>
+    `;
+    
+    showModal("Profil Düzenle", content);
+
+    document.getElementById('edit-profile-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        updateProfile();
+    });
+}
+
+function showProfile() {
+    const content = `
+        <h2>Sürücü Profili</h2>
+        <p><strong>Ad:</strong> ${driver.name}</p>
+        <p><strong>ID:</strong> ${driver.id}</p>
+        <p><strong>Konum:</strong> ${driver.location}</p>
+        <p><strong>Durum:</strong> ${driver.status}</p>
+        <p><strong>Ehliyet Tipi:</strong> ${driver.licenseType}</p>
+        <h3>Mevcut Tır</h3>
+        ${driver.currentTruck ? `
+            <p><strong>Model:</strong> ${driver.currentTruck.model}</p>
+            <p><strong>Kapasite:</strong> ${driver.currentTruck.capacity} kg</p>
+            <p><strong>Durum:</strong> ${driver.currentTruck.status}</p>
+        ` : '<p>Henüz bir tır seçilmedi.</p>'}
+        <button onclick="showEditProfileModal()" class="btn btn-secondary">Profili Düzenle</button>
+    `;
+    showModal("Profil Bilgileri", content);
+}
+
+function showJobDetails(jobId) {
+    const job = jobs.find(j => j.id === jobId);
+    if (!job) return;
+
+    let content = `
+        <h2>İş Detayları</h2>
+        <p><strong>Rota:</strong> ${job.route[0].city} → ${job.route[job.route.length - 1].city}</p>
+        <p><strong>Toplam Mesafe:</strong> ${job.totalDistance} km</p>
+        <p><strong>Tahmini Süre:</strong> ${job.estimatedTime}</p>
+        <p><strong>Ödeme:</strong> ${formatCurrency(job.payment)}</p>
+        <h3>Duraklar</h3>
+    `;
+
+    job.route.forEach((stop, index) => {
+        content += `
+            <div class="stop-info">
+                <h4>Durak ${index + 1}: ${stop.city} (${stop.code})</h4>
+                <p>Görev: ${stop.task}</p>
+                <p>Ağırlık Değişimi: ${stop.weight > 0 ? '+' : ''}${stop.weight} kg</p>
+            </div>
+        `;
+    });
+
+    content += '<div id="job-detail-map" style="height: 300px; margin-top: 20px;"></div>';
+
+    showModal("İş Detayları", content);
+
+    // Modal gösterildikten sonra haritayı oluştur
+    setTimeout(() => {
+        const jobDetailMap = L.map('job-detail-map').setView([39.9334, 32.8597], 6);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(jobDetailMap);
+        
+        const routePoints = job.route.map(stop => getLatLngForCity(stop.city));
+        
+        routePoints.forEach((point, index) => {
+            L.marker(point)
+                .addTo(jobDetailMap)
+                .bindPopup(`${job.route[index].city}: ${job.route[index].task}`);
+        });
+
+        L.polyline(routePoints, { color: getRandomColor() }).addTo(jobDetailMap);
+        jobDetailMap.fitBounds(routePoints);
+    }, 100);
+}
+
+// --------- 4. Olay Dinleyicileri ---------
+function toggleAvailability() {
+    driver.status = driver.status === "Müsait" ? "Meşgul" : "Müsait";
+    updateDriverInfo();
+    showNotification(`Durum değiştirildi: ${driver.status}`);
+}
+
+function selectTruck(truckId) {
+    const selectedTruck = trucks.find(truck => truck.id === truckId);
+    if (selectedTruck) {
+        driver.currentTruck = selectedTruck;
+        updateDriverInfo();
+        showNotification(`Tır seçildi: ${selectedTruck.model}`, 'success');
+        showJobList();
+    }
+}
+
+function acceptJob(jobId) {
+    const job = jobs.find(job => job.id === jobId);
+    if (job && driver.currentTruck) {
+        const truckCapacity = driver.currentTruck.capacity;
+        const maxWeight = Math.max(...job.route.map(stop => Math.abs(stop.weight)));
+        if (maxWeight > truckCapacity) {
+            showNotification("Bu iş için tırınızın kapasitesi yetersiz!", 'error');
+            return;
+        }
+
+        job.status = "Kabul Edildi";
+        driver.status = "Görevde";
+        currentJob = job;
+        updateDriverInfo();
+        showNotification(`İş kabul edildi: ${job.route[0].city} → ${job.route[job.route.length - 1].city}`, 'success');
+        showRouteOnMap(job);
+        startDrivingMode(job);
+    } else if (!driver.currentTruck) {
+        showNotification("Lütfen önce bir tır seçin!", 'warning');
+    }
+}
+
+// --------- 5. Harita İşlemleri ---------
+function initMap() {
+    map = L.map('map').setView([39.9334, 32.8597], 6);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+}
+
+function showRouteOnMap(job) {
+    if (map) {
+        map.eachLayer(layer => {
+            if (layer instanceof L.Marker || layer instanceof L.Polyline) {
+                map.removeLayer(layer);
+            }
+        });
+
+        const routePoints = job.route.map(stop => getLatLngForCity(stop.city));
+
+        routePoints.forEach((point, index) => {
+            L.marker(point)
+                .addTo(map)
+                .bindPopup(`${job.route[index].city}: ${job.route[index].task}`);
+        });
+
+        L.polyline(routePoints, { color: getRandomColor() }).addTo(map);
+        map.fitBounds(routePoints);
+    }
+}
+
+function getLatLngForCity(city) {
+    const cities = {
+        'İstanbul': [41.0082, 28.9784],
+        'Ankara': [39.9334, 32.8597],
+        'İzmir': [38.4192, 27.1287],
+        'Antalya': [36.8841, 30.7056],
+        'Konya': [37.8667, 32.4833],
+    };
+    return cities[city] || [39.9334, 32.8597]; // Varsayılan olarak Ankara
+}
+
+// --------- 6. Sürüş Modu İşlemleri ---------
+function startDrivingMode(job) {
+    document.getElementById('driving-mode').style.display = 'flex';
+    initDrivingModeMap();
+    updateDrivingModeInfo(job, 0);
+
+    let currentStopIndex = 0;
+    drivingInterval = setInterval(() => {
+        currentStopIndex++;
+        if (currentStopIndex < job.route.length) {
+            updateDrivingModeInfo(job, currentStopIndex);
+        } else {
+            clearInterval(drivingInterval);
+            endDrivingMode();
+            showNotification("Görev tamamlandı!", 'success');
+        }
+    }, 10000); // Her 10 saniyede bir durak değişimi (gerçek uygulamada GPS ile güncellenecek)
+}
+
+function initDrivingModeMap() {
+    if (!drivingModeMap) {
+        drivingModeMap = L.map('driving-mode-map').setView([39.9334, 32.8597], 6);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(drivingModeMap);
+    }
+}
+
+function updateDrivingModeInfo(job, stopIndex) {
+    const currentStop = job.route[stopIndex];
+    const nextStop = job.route[stopIndex + 1];
+
+    document.getElementById('current-location').textContent = currentStop.city;
+
+    document.getElementById('next-stop').textContent = nextStop ? nextStop.city : "Son Durak";
+    document.getElementById('next-task').textContent = nextStop ? nextStop.task : "Görev Tamamlandı";
+
+    // Kalan mesafe ve süre hesaplaması (basitleştirilmiş)
+    const remainingStops = job.route.slice(stopIndex + 1);
+    const remainingDistance = remainingStops.length * (job.totalDistance / job.route.length);
+    const remainingTime = remainingStops.length * (parseInt(job.estimatedTime) / job.route.length);
+
+    document.getElementById('remaining-distance').textContent = `${remainingDistance.toFixed(0)} km`;
+    document.getElementById('estimated-arrival').textContent = `${remainingTime.toFixed(1)} saat`;
+
+    updateDrivingModeMap(job, stopIndex);
+}
+
+function updateDrivingModeMap(job, stopIndex) {
+    if (drivingModeMap) {
+        drivingModeMap.eachLayer(layer => {
+            if (layer instanceof L.Marker || layer instanceof L.Polyline) {
+                drivingModeMap.removeLayer(layer);
+            }
+        });
+
+        const routePoints = job.route.map(stop => getLatLngForCity(stop.city));
+
+        routePoints.forEach((point, index) => {
+            const icon = index === stopIndex ? 
+                L.icon({
+                    iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    shadowSize: [41, 41]
+                }) : 
+                L.icon({
+                    iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    shadowSize: [41, 41]
+                });
+
+            L.marker(point, {icon: icon})
+                .addTo(drivingModeMap)
+                .bindPopup(`${job.route[index].city}: ${job.route[index].task}`);
+        });
+
+        L.polyline(routePoints, { color: getRandomColor() }).addTo(drivingModeMap);
+        drivingModeMap.fitBounds(routePoints);
+    }
+}
+
+function toggleDrivingModePause() {
+    if (drivingInterval) {
+        clearInterval(drivingInterval);
+        drivingInterval = null;
+        showNotification("Sürüş modu duraklatıldı", 'warning');
+    } else {
+        // Sürüşe devam et
+        // Not: Gerçek uygulamada, mevcut durumu saklamalı ve buradan devam etmelisiniz
+        showNotification("Sürüş modu devam ediyor", 'info');
+    }
+}
+
+
+function completeJob() {
+    if (!currentJob || currentJob.status === "Tamamlandı") {
+        showNotification("Aktif veya tamamlanmamış bir iş bulunamadı", 'error');
+        return;
+    }
+
+    const content = `
+        <h3>İş Tamamlama Onayı</h3>
+        <p>Şu anki konumunuz: ${driver.location}</p>
+        <p>Son durak: ${currentJob.route[currentJob.route.length - 1].city}</p>
+        <p>İşi tamamlamak istediğinizden emin misiniz?</p>
+        <button onclick="confirmJobCompletion()" class="btn btn-primary">Onayla</button>
+        <button onclick="closeModal()" class="btn btn-secondary">İptal</button>
+    `;
+
+    showModal("İş Tamamlama", content);
+}
+
+driver.wallet = 5000; // Başlangıç bakiyesi
+driver.completedJobs = []; // Tamamlanan işler listesi
+
+function showWalletAndHistory() {
+    const content = `
+        <div class="container">
+            <div class="wallet-container">
+                <h3>Cüzdan</h3>
+                <p>Mevcut Bakiye: ${formatCurrency(driver.wallet)}</p>
+            </div>
+            <div class="job-history-container">
+                <h3>Geçmiş İşler</h3>
+                ${driver.completedJobs.length > 0 ? `
+                    <ul class="job-history-list">
+                        ${driver.completedJobs.map(job => `
+                            <li class="job-history-item">
+                                <span>${job.route[0].city} → ${job.route[job.route.length - 1].city}</span>
+                                <span>${formatCurrency(job.payment)}</span>
+                                <span>${new Date(job.completionDate).toLocaleDateString()}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                ` : '<p>Henüz tamamlanmış iş bulunmamaktadır.</p>'}
+            </div>
+        </div>
+    `;
+
+    showModal("Cüzdan ve Geçmiş İşler", content);
+}
+
+
+// confirmJobCompletion fonksiyonunu 
+function confirmJobCompletion() {
+    closeModal();
+    showNotification("İş tamamlama onayı bekleniyor...", 'info');
+
+    setTimeout(() => {
+        const approved = Math.random() > 0.2; // %80 onay şansı
+        if (approved) {
+            currentJob.status = "Tamamlandı";
+            driver.status = "Müsait";
+            driver.wallet += currentJob.payment;
+            driver.completedJobs.push({...currentJob, completionDate: new Date()});
+            showNotification(`İş başarıyla tamamlandı ve onaylandı! Kazanılan: ${formatCurrency(currentJob.payment)}`, 'success');
+            updateDriverInfo();
+            currentJob = null;
+            showJobList();
+        } else {
+            showNotification("İş tamamlama onayı reddedildi. Lütfen müşteri hizmetleri ile iletişime geçin.", 'error');
+        }
+    }, 3000);
+}
+
+
+function endDrivingMode() {
+    document.getElementById('driving-mode').style.display = 'none';
+    if (drivingInterval) {
+        clearInterval(drivingInterval);
+        drivingInterval = null;
+    }
+    if (currentJob && currentJob.status !== "Tamamlandı") {
+        completeJob();
+    } else {
+        driver.status = "Müsait";
+        currentJob = null;
+        updateDriverInfo();
+        showJobList();
+    }
+}
+
+// --------- 7. API Simülasyonları ---------
+function simulateAPICall(endpoint, data = null) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            switch(endpoint) {
+                case 'updateDriverStatus':
+                    resolve({ success: true, message: "Sürücü durumu güncellendi" });
+                    break;
+                case 'acceptJob':
+                    resolve({ success: true, message: "İş başarıyla kabul edildi" });
+                    break;
+                case 'completeJob':
+                    resolve({ success: true, message: "İş başarıyla tamamlandı" });
+                    break;
+                default:
+                    reject({ success: false, message: "Bilinmeyen endpoint" });
+            }
+        }, 500); // 500ms gecikme ile API çağrısını simüle et
+    });
+}
+
+// --------- 8. Sayfa Yüklendiğinde Çalıştırılacak Fonksiyonlar ---------
+// Sayfa yüklendiğinde çalıştırılacak fonksiyonlar
+window.onload = function() {
+    updateDriverInfo();
+    showJobList();
+    initMap();
+
+    // Mobil menü toggle işlevselliği
+    document.getElementById('tay-menu-toggle').addEventListener('click', function() {
+        document.getElementById('sidebar').classList.toggle('active');
+    });
+};
+
+// Sidebar'ı göstermek/gizlemek için bir fonksiyon ekleyin
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    sidebar.classList.toggle('active');
+}
+
+// Mobil menü butonuna tıklandığında sidebar'ı aç/kapat
+document.getElementById('tay-menu-toggle').addEventListener('click', toggleSidebar);
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const menuToggle = document.getElementById('tay-menu-toggle');
+    const nav = document.querySelector('.tay-nav');
+
+    menuToggle.addEventListener('click', function() {
+        nav.classList.toggle('active');
+    });
+});
+
+    </script>
+</body>
+</html>
